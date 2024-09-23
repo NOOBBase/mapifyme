@@ -77,35 +77,3 @@ Initial release. No upgrade necessary.
 
 This plugin is licensed under the GPLv2 or later.  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-
-Lets start build:
-
-# MapiFy Me
-
-Welcome to the ultimate geolocation, mapping, and proximity search solution for WordPress.
-
-Using MapiFy Me plugin, and the powerful features of Google Maps API and OpenStreetMaps, you can easily geotag any of your post types, BuddyPress members and other components. Create unlimited advanced, proximity search forms to search and find any of the geotagged components of your site.
-
-With MapiFy Me, creating a real estate, events, directory, classifieds, social networking and any other type of location-based website is a simple task.
-
-The plugin needs to be build in a modular setup almost microservice oriented. We need to make sure that we store all default values in the main file and follow wordpres best practises in terms of codeing and structure. This is the highest focus and prio. Dont ignore it!
-
-In the post edit we add a meta box (advanced) so it shows under the post edit with the following design:
-
-# These are tabs | here we show the content
-
-= Geo location = Lattitude and lonitude fields
-= Adress = configurable adres fields
-=======================================================================================================
-
-## Key features of MapiFy Me
-
--Post Types GeoLocation
--BuddyPress Members GeoLocation
--Advanced GeoLocation form
--Advanced Proximity Search
--Single GeoLocation widget and shortcode
--Current GeoLocation Shortcode and Widget
--Can be used with OpenStreetMaps and LeafLet OR Google Maps API
--Theme Flexibility
--Developer Friendly
