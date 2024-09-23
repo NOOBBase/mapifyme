@@ -1,0 +1,73 @@
+/* Popup template 1 styles */
+.popup-template-1 {
+  background-color: #eb4034;
+  padding: 10px;
+  border-radius: 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Popup template 2 styles */
+.popup-template-2 {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  margin: 0 auto;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+.popup-template-2 h4.popup-title {
+  margin-bottom: 10px;
+  color: #0073aa;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.popup-template-2 p {
+  margin: 8px 0;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.popup-template-2 a {
+  color: #0073aa;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.popup-template-2 a:hover {
+  border-bottom: 1px solid #0073aa;
+}
+
+.popup-template-2 .popup-content {
+  margin-top: 15px;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.popup-template-2 .popup-phone,
+.popup-template-2 .popup-website,
+.popup-template-2 .popup-address,
+.popup-template-2 .popup-category,
+.popup-template-2 .popup-tags,
+.popup-template-2 .popup-author {
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+@media (max-width: 480px) {
+  .popup-template-2 {
+    padding: 15px;
+    max-width: 90%;
+  }
+
+  .popup-template-2 h4.popup-title {
+    font-size: 1.25rem;
+  }
+
+  .popup-template-2 p {
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,74 @@
+#mapifyme-vertical-tabs {
+  display: flex;
+  margin-top: 10px;
+}
+
+.mapifyme-tab-links-vertical {
+  flex-basis: 10%;
+  padding-right: 20px;
+  border-right: 1px solid #ddd;
+}
+
+.mapifyme-tab-links-vertical ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mapifyme-tab-links-vertical li {
+  margin-bottom: 10px;
+}
+
+.mapifyme-tab-links-vertical a {
+  padding: 5px 10px;
+  display: block;
+  background: #0073aa;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.mapifyme-tab-links-vertical li.active a {
+  background: #00a0d2;
+}
+
+.mapifyme-tab-content-vertical {
+  flex-grow: 1;
+  padding-left: 20px;
+}
+
+.tab-vertical {
+  display: none;
+}
+
+.tab-vertical.active {
+  display: block;
+}
+
+.mapifyme-tab-content-vertical p {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.mapifyme-tab-content-vertical label {
+  width: 150px;
+  font-weight: bold;
+  margin-right: 20px;
+}
+
+.mapifyme-tab-content-vertical input[type='text'],
+.mapifyme-tab-content-vertical input[type='url'],
+.mapifyme-tab-content-vertical input[type='email'] {
+  flex-grow: 1;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-width: 300px;
+}
+
+/* Add this rule for the map */
+mapifyme-search-map {
+  width: 100%; /* Full width */
+  height: 400px; /* Fixed height for the map */
+}
