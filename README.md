@@ -1,0 +1,1 @@
+# mapifyme-wordpress-plugin
