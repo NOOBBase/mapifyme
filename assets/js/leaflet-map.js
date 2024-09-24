@@ -1,18 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // Global object to track initialized maps
   const initializedMaps = {};
 
-  // Function to initialize maps for containers
   function initializeMaps() {
     const mapContainers = document.querySelectorAll('[data-mapifyme-map]');
 
     mapContainers.forEach(function (container) {
       const mapId = container.id;
 
-      // Check if the map is already initialized
       if (initializedMaps[mapId]) {
         console.log(`Map with ID ${mapId} is already initialized.`);
-        return; // Skip re-initializing
+        return;
       }
 
       const latitude = container.getAttribute('data-latitude');
@@ -20,59 +17,90 @@ document.addEventListener('DOMContentLoaded', function () {
       const templateClass = container.getAttribute('data-template');
       const popupHTML = container.getAttribute('data-popup-html');
       const draggableMarker =
-        container.getAttribute('data-draggable') === 'true'; // Check if the marker should be draggable
+        container.getAttribute('data-draggable') === 'true';
 
-      // Initialize map for each container
-      const map = L.map(container.id).setView(
-        [latitude || 0, longitude || 0],
-        13
-      );
+      if (!latitude || !longitude) {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              const lat = position.coords.latitude;
+              const lon = position.coords.longitude;
+              initMap(
+                container,
+                lat,
+                lon,
+                templateClass,
+                popupHTML,
+                draggableMarker
+              );
 
-      // Add OpenStreetMap tiles
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution:
-          'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
-
-      // Add a marker to the map with draggable functionality
-      const marker = L.marker([latitude, longitude], {
-        draggable: draggableMarker,
-      }).addTo(map);
-      marker.bindPopup(
-        `<div class="${templateClass || 'default-template'}">${popupHTML}</div>`
-      );
-
-      // Handle marker dragging (if draggable)
-      if (draggableMarker) {
-        marker.on('dragend', function () {
-          const latLng = marker.getLatLng();
-          console.log(`Marker dragged to: ${latLng.lat}, ${latLng.lng}`);
-
-          // Reuse the reverseGeocode function to update the address and database
-          reverseGeocode(latLng.lat, latLng.lng, mapId);
-        });
+              // Optionally reverse geocode current location
+              reverseGeocode(lat, lon, mapId);
+            },
+            function (error) {
+              console.error('Geolocation error: ', error.message);
+              alert('Unable to retrieve your location.');
+            }
+          );
+        } else {
+          console.error('Geolocation is not supported by this browser.');
+          alert('Geolocation is not supported by your browser.');
+        }
+      } else {
+        // Initialize map with provided lat/lng
+        initMap(
+          container,
+          latitude,
+          longitude,
+          templateClass,
+          popupHTML,
+          draggableMarker
+        );
       }
-
-      // Mark map as initialized
-      initializedMaps[mapId] = map;
-
-      // Force the map to resize after initialization
-      setTimeout(function () {
-        map.invalidateSize(); // Fixes partial load issue
-      }, 200);
     });
   }
 
-  // Attach initializeMaps to the global window object
-  window.initializeMaps = initializeMaps;
+  function initMap(
+    container,
+    latitude,
+    longitude,
+    templateClass,
+    popupHTML,
+    draggableMarker
+  ) {
+    const mapId = container.id;
+    const map = L.map(mapId).setView([latitude, longitude], 13);
 
-  // Initialize all maps and geocoding logic
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; OpenStreetMap contributors',
+    }).addTo(map);
+
+    const marker = L.marker([latitude, longitude], {
+      draggable: draggableMarker,
+    }).addTo(map);
+    marker.bindPopup(
+      `<div class="${templateClass || 'default-template'}">${popupHTML}</div>`
+    );
+
+    if (draggableMarker) {
+      marker.on('dragend', function () {
+        const latLng = marker.getLatLng();
+        reverseGeocode(latLng.lat, latLng.lng, mapId);
+      });
+    }
+
+    initializedMaps[mapId] = map;
+
+    setTimeout(function () {
+      map.invalidateSize();
+    }, 200);
+  }
+
+  window.initializeMaps = initializeMaps;
   initializeMaps();
 });
 
-// Function to update the address field from coordinates (reverse geocoding)
-function reverseGeocode(lat, lon, postId) {
-  // Check if mapifymeGeotag is defined and contains the reverse_geocode_api_url
+function reverseGeocode(lat, lon, mapId) {
   if (
     typeof mapifymeGeotag === 'undefined' ||
     !mapifymeGeotag.reverse_geocode_api_url
@@ -83,78 +111,29 @@ function reverseGeocode(lat, lon, postId) {
     return;
   }
 
-  $.get(mapifymeGeotag.reverse_geocode_api_url, {
-    lat: lat,
-    lon: lon,
-    format: 'json',
-    addressdetails: 1,
-    timestamp: new Date().getTime(),
-  })
-    .done(function (data) {
-      console.log('Reverse Geocode Response:', data);
-
-      if (data && data.address) {
-        // Update address fields based on the response
-        const address = data.address;
-        $('#mapifyme_street').val(address.road || '');
-        $('#mapifyme_city').val(
-          address.city || address.town || address.village || ''
-        );
-        $('#mapifyme_state').val(address.state || '');
-        $('#mapifyme_zip').val(address.postcode || '');
-        $('#mapifyme_country').val(address.country || '');
-
-        // Update geotag data in the database
-        updateGeotagData(postId, {
-          latitude: lat,
-          longitude: lon,
-          street: address.road || '',
-          city: address.city || address.town || address.village || '',
-          state: address.state || '',
-          zip: address.postcode || '',
-          country: address.country || '',
-        });
-      } else {
-        alert('Address not found for these coordinates.');
-      }
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-      console.error('Reverse Geocode Request Failed:', textStatus, errorThrown);
-      alert('Error fetching address from coordinates.');
-    });
-}
-
-// Reuse the existing function to update geotag data via AJAX
-function updateGeotagData(postId, data) {
-  console.log('Sending Data to Update:', data); // Log data being sent to the server
-
-  // Check if mapifymeGeotag and ajax_url are defined
-  if (typeof mapifymeGeotag === 'undefined' || !mapifymeGeotag.ajax_url) {
-    console.error('mapifymeGeotag is not defined or missing ajax_url');
-    return;
+  // Ensure jQuery is loaded before calling $.get()
+  if (typeof jQuery !== 'undefined') {
+    // Make the reverse geocode request
+    jQuery
+      .get(mapifymeGeotag.reverse_geocode_api_url, {
+        lat: lat,
+        lon: lon,
+        format: 'json',
+        addressdetails: 1,
+      })
+      .done(function (data) {
+        if (data && data.address) {
+          const address = data.address;
+          // Update your address fields or log them
+          console.log('Address:', address);
+        } else {
+          alert('Address not found for these coordinates.');
+        }
+      })
+      .fail(function (jqXHR, textStatus, errorThrown) {
+        alert('Error fetching address.');
+      });
+  } else {
+    console.error('jQuery is not loaded');
   }
-
-  $.ajax({
-    url: mapifymeGeotag.ajax_url,
-    method: 'POST',
-    data: {
-      action: 'mapifyme_update_geotag_data',
-      nonce: mapifymeGeotag.nonce, // Include the nonce
-      post_id: postId,
-      geotag_data: data,
-    },
-    success: function (response) {
-      if (response.success) {
-        console.log('Geotag data updated successfully.');
-        alert(response.data.message);
-      } else {
-        console.log('Failed to update geotag data.', response);
-        alert(response.data || 'Failed to update geotag data.');
-      }
-    },
-    error: function (jqXHR, textStatus, errorThrown) {
-      console.error('Error updating geotag data:', textStatus, errorThrown);
-      alert('Error updating geotag data.');
-    },
-  });
 }

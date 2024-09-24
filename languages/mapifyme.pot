@@ -1,0 +1,323 @@
+# Copyright (C) 2024 NOOBBase
+# This file is distributed under the GNU General Public License v2.0.
+msgid ""
+msgstr ""
+"Project-Id-Version: MapifyMe 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/mapifyme\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-09-23T15:41:37+02:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: mapifyme\n"
+
+#. Plugin Name of the plugin
+#: mapifyme.php
+#: includes/admin/class-mapifyme-admin.php:23
+msgid "MapifyMe"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: mapifyme.php
+msgid "https://mapifyme.com"
+msgstr ""
+
+#. Description of the plugin
+#: mapifyme.php
+msgid "A modular geolocation plugin for WordPress with advanced proximity search and geotagging features."
+msgstr ""
+
+#. Author of the plugin
+#: mapifyme.php
+msgid "NOOBBase"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:22
+#: includes/admin/class-mapifyme-admin.php:39
+msgid "MapifyMe Settings"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:61
+msgid "Map Provider Settings"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:68
+msgid "Choose Map Provider"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:76
+msgid "Google Maps API Key"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:85
+msgid "Post Type Settings"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:92
+msgid "Enable Post Types for Geotagging"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:101
+msgid "Popup Template Settings"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:108
+msgid "Select Popup Template"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:117
+msgid "Rate Limiting Settings"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:124
+msgid "Rate Limiting - Max Requests Per IP"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:132
+msgid "Rate Limiting - Time Period (Minutes)"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:161
+msgid "Leaflet (Default)"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:162
+msgid "Google Maps"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:175
+msgid "Enter your Google Maps API key if you are using Google Maps as the provider."
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:205
+msgid "Template 1"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:206
+msgid "Template 2"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:208
+msgid "Choose a popup template for displaying map location details."
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:220
+msgid "Set the maximum number of requests allowed per IP within the specified time period."
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:232
+msgid "Set the time period (in minutes) during which the rate limit is enforced."
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:35
+msgid "Invalid nonce."
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:43
+msgid "Permission denied or invalid post ID."
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:49
+msgid "Invalid geotag data."
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:104
+msgid "Latitude and Longitude are required."
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:110
+msgid "Invalid latitude value."
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:115
+msgid "Invalid longitude value."
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:129
+msgid "Geotag data updated successfully."
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:135
+msgid "Failed to update geotag data."
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:155
+msgid "Geotag Post"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:195
+msgid "Search Location"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:196
+msgid "Geo Location"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:197
+msgid "Address"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:198
+msgid "Contact"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:225
+msgid "Latitude:"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:229
+msgid "Longitude:"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:233
+msgid "Fetch Address from Coordinates"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:240
+msgid "Street:"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:244
+msgid "City:"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:248
+msgid "State:"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:252
+msgid "ZIP Code:"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:256
+msgid "Country:"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:260
+msgid "Fetch Coordinates from Address"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:268
+msgid "Website:"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:272
+msgid "Email:"
+msgstr ""
+
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:276
+msgid "Phone:"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-shortcode.php:50
+msgid "No location specified."
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-shortcode.php:57
+msgid "No location data found."
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-shortcode.php:120
+msgid "Template not found:"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:12
+msgid "MapifyMe Single Location"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:13
+msgid "Display a single location map."
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:89
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:94
+msgid "Your text here"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:99
+msgid "Popup Template:"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:100
+msgid "Leave empty for default"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:103
+msgid "Show Latitude"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:104
+msgid "Show Longitude"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:105
+msgid "Show Street"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:106
+msgid "Show City"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:107
+msgid "Show State"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:108
+msgid "Show Zip"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:109
+msgid "Show Country"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:110
+msgid "Show Website"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:111
+msgid "Show Email"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:112
+msgid "Show Phone"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:113
+msgid "Show Title"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:114
+msgid "Show Content"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:115
+msgid "Show Category"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:116
+msgid "Show Tags"
+msgstr ""
+
+#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:117
+msgid "Show Author"
+msgstr ""
+
+#: includes/admin/assets/js/mapifyme-geotag.js:54
+msgid "Coordinates not found for this address."
+msgstr ""
+
+#: includes/admin/assets/js/mapifyme-geotag.js:59
+msgid "Error fetching coordinates."
+msgstr ""
+
+#: includes/admin/assets/js/mapifyme-geotag.js:63
+msgid "Please enter a complete address."
+msgstr ""
+
+#: includes/admin/assets/js/mapifyme-geotag.js:80
+msgid "Please enter both latitude and longitude."
+msgstr ""

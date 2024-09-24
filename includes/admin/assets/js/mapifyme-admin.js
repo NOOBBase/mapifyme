@@ -1,18 +1,18 @@
 jQuery(document).ready(function ($) {
-  function toggleGoogleMapsApiKeyField() {
+  function toggleGoogleMapsApiKey() {
     var mapProvider = $('#map_provider').val();
     if (mapProvider === 'google_maps') {
-      $('#google_maps_api_key').closest('tr').show();
+      $('#google_maps_api_key_wrapper').closest('tr').show(); // This hides the entire row
     } else {
-      $('#google_maps_api_key').closest('tr').hide();
+      $('#google_maps_api_key_wrapper').closest('tr').hide(); // Hides the row when Leaflet is selected
     }
   }
 
-  // Run on page load
-  toggleGoogleMapsApiKeyField();
+  // Initial call to hide/show the field on page load
+  toggleGoogleMapsApiKey();
 
-  // Run when the map provider is changed
-  $('#map_provider').on('change', function () {
-    toggleGoogleMapsApiKeyField();
+  // Trigger toggling when the map provider changes
+  $('#map_provider').change(function () {
+    toggleGoogleMapsApiKey();
   });
 });

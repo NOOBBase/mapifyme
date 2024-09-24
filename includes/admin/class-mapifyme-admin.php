@@ -11,6 +11,8 @@ class MapifyMe_Admin
     add_action('admin_menu', array($this, 'add_admin_menu'));
     add_action('admin_init', array($this, 'register_settings'));
     add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts')); // Add admin scripts
+    // Hook for handling plugin activation/deactivation.
+    add_action('admin_post_mapifyme_plugin_activation', array($this, 'handle_plugin_activation'));
   }
 
   /**
@@ -18,15 +20,74 @@ class MapifyMe_Admin
    */
   public function add_admin_menu()
   {
+    // Main "MapifyMe" menu (top-level menu item)
     add_menu_page(
-      __('MapifyMe Settings', 'mapifyme'),
-      __('MapifyMe', 'mapifyme'),
+      __('MapifyMe', 'mapifyme'), // Menu title
+      __('MapifyMe', 'mapifyme'), // Page title
       'manage_options',
-      'mapifyme-settings',
-      array($this, 'render_settings_page'),
+      'mapifyme-main', // Slug for upsell page
+      array($this, 'render_main_page'), // Callback function to display the upsell/marketing content
       'dashicons-location-alt',
       80
     );
+
+    // Add a submenu for MapifyMe Settings
+    add_submenu_page(
+      'mapifyme-main', // Parent slug
+      __('MapifyMe Settings', 'mapifyme'), // Page title
+      __('Settings', 'mapifyme'), // Menu title
+      'manage_options',
+      'mapifyme-settings', // Submenu slug
+      array($this, 'render_settings_page') // Callback function to render the settings page
+    );
+
+    // Add a submenu for MapifyMe Plugins
+    add_submenu_page(
+      'mapifyme-main', // Parent slug
+      __('MapifyMe Plugins', 'mapifyme'), // Page title
+      __('Plugins', 'mapifyme'), // Menu title
+      'manage_options',
+      'mapifyme-plugins', // Submenu slug
+      array($this, 'render_plugins_page') // Callback function to render the plugins page
+    );
+  }
+
+
+  /**
+   * Render the main MapifyMe marketing page.
+   * This page can be used for upselling premium features, displaying marketing content, etc.
+   */
+  public function render_main_page()
+  {
+?>
+    <div class="wrap">
+      <h1><?php esc_html_e('Welcome to MapifyMe', 'mapifyme'); ?></h1>
+      <p><?php esc_html_e('Thank you for using MapifyMe. Check out our premium features to enhance your experience!', 'mapifyme'); ?></p>
+
+      <h2><?php esc_html_e('Premium Features', 'mapifyme'); ?></h2>
+      <ul>
+        <li><?php esc_html_e('Advanced Geolocation Tools', 'mapifyme'); ?></li>
+        <li><?php esc_html_e('Unlimited Proximity Search Forms', 'mapifyme'); ?></li>
+        <li><?php esc_html_e('Customizable Map Themes', 'mapifyme'); ?></li>
+        <li><?php esc_html_e('Premium Support', 'mapifyme'); ?></li>
+        <!-- Add more upsell features here -->
+      </ul>
+
+      <h3><?php esc_html_e('Upgrade to Pro', 'mapifyme'); ?></h3>
+      <p>
+        <a href="https://mapifyme.com/upgrade" class="button button-primary"><?php esc_html_e('Upgrade Now', 'mapifyme'); ?></a>
+      </p>
+
+      <hr>
+
+      <h2><?php esc_html_e('Learn More', 'mapifyme'); ?></h2>
+      <p><?php esc_html_e('Explore our tutorials, guides, and community forums to make the most out of MapifyMe.', 'mapifyme'); ?></p>
+      <p>
+        <a href="https://yourwebsite.com/docs" class="button"><?php esc_html_e('Documentation', 'mapifyme'); ?></a>
+        <a href="https://yourwebsite.com/forums" class="button"><?php esc_html_e('Community Forums', 'mapifyme'); ?></a>
+      </p>
+    </div>
+  <?php
   }
 
   /**
@@ -34,7 +95,7 @@ class MapifyMe_Admin
    */
   public function render_settings_page()
   {
-?>
+  ?>
     <div class="wrap">
       <h1><?php esc_html_e('MapifyMe Settings', 'mapifyme'); ?></h1>
       <form method="post" action="options.php">
@@ -47,6 +108,115 @@ class MapifyMe_Admin
     </div>
   <?php
   }
+
+  /**
+   * Render the MapifyMe Plugins page, displaying all registered plugins.
+   */
+  public function render_plugins_page()
+  {
+    if (isset($_GET['message']) && $_GET['message'] === 'plugin_updated') {
+      add_settings_error('mapifyme_messages', 'plugin_updated', __('Plugin status updated.', 'mapifyme'), 'success');
+    }
+    settings_errors('mapifyme_messages'); // Display messages
+    // Fetch the registered plugins from the MapifyMe_Plugins class
+    $registered_plugins = MapifyMe_Plugins::get_registered_plugins();
+  ?>
+    <div class="wrap">
+      <h1><?php esc_html_e('MapifyMe Plugins', 'mapifyme'); ?></h1>
+
+      <table class="widefat fixed striped">
+        <thead>
+          <tr>
+            <th><?php esc_html_e('Plugin Name', 'mapifyme'); ?></th>
+            <th><?php esc_html_e('Version', 'mapifyme'); ?></th>
+            <th><?php esc_html_e('Status', 'mapifyme'); ?></th>
+            <th><?php esc_html_e('Directory', 'mapifyme'); ?></th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php if (!empty($registered_plugins)) : ?>
+            <?php foreach ($registered_plugins as $plugin) :
+              // Skip hidden plugins
+              if ($plugin->is_hidden_plugin) {
+                continue;
+              }
+
+              $plugin_class = get_class($plugin);
+              $is_active = MapifyMe_Plugins::is_plugin_active($plugin_class);
+            ?>
+              <tr>
+                <!-- Display the plugin name instead of the class name -->
+                <td><?php echo esc_html($plugin->name); ?></td>
+                <td><?php echo esc_html($plugin->version); ?></td>
+                <td>
+                  <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+                    <?php wp_nonce_field('mapifyme_plugin_activation', 'mapifyme_plugin_activation_nonce'); ?>
+                    <input type="hidden" name="plugin_class" value="<?php echo esc_attr($plugin_class); ?>">
+                    <input type="hidden" name="action" value="mapifyme_plugin_activation">
+
+                    <!-- Disable the checkbox if allowed_disable is false -->
+                    <input type="checkbox" name="plugin_status" value="1" <?php checked($is_active); ?>
+                      <?php if (!$plugin->allowed_disable) echo 'disabled'; ?> onchange="this.form.submit()">
+
+                    <?php echo esc_html($is_active ? __('Active', 'mapifyme') : __('Inactive', 'mapifyme')); ?>
+                  </form>
+                </td>
+                <td><?php echo esc_html($plugin->plugin_dir); ?></td>
+              </tr>
+            <?php endforeach; ?>
+          <?php else : ?>
+            <tr>
+              <td colspan="4"><?php esc_html_e('No plugins are registered.', 'mapifyme'); ?></td>
+            </tr>
+          <?php endif; ?>
+        </tbody>
+      </table>
+    </div>
+  <?php
+  }
+
+
+  /**
+   * Handle plugin activation and deactivation.
+   */
+  public function handle_plugin_activation()
+  {
+    // Verify the nonce
+    if (isset($_POST['mapifyme_plugin_activation_nonce']) && wp_verify_nonce($_POST['mapifyme_plugin_activation_nonce'], 'mapifyme_plugin_activation')) {
+      if (isset($_POST['plugin_class'])) {
+        $plugin_class = sanitize_text_field($_POST['plugin_class']);
+        $new_status = isset($_POST['plugin_status']) ? true : false;
+
+        // Get the plugin object by class name
+        foreach (MapifyMe_Plugins::get_registered_plugins() as $plugin) {
+          if (get_class($plugin) === $plugin_class) {
+            // Check if the plugin allows disabling
+            if (!$plugin->allowed_disable) {
+              add_settings_error('mapifyme_messages', 'plugin_disable_not_allowed', __('This plugin cannot be disabled.', 'mapifyme'), 'error');
+              break;
+            }
+
+            if ($new_status) {
+              // Activate the plugin if the checkbox is checked
+              MapifyMe_Plugins::activate_plugin($plugin);
+              add_settings_error('mapifyme_messages', 'plugin_activated', __('Plugin activated successfully!', 'mapifyme'), 'success');
+            } else {
+              // Deactivate the plugin if the checkbox is unchecked
+              MapifyMe_Plugins::deactivate_plugin($plugin);
+              add_settings_error('mapifyme_messages', 'plugin_deactivated', __('Plugin deactivated successfully!', 'mapifyme'), 'success');
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    // Redirect to prevent form resubmission and add feedback
+    wp_redirect(admin_url('admin.php?page=mapifyme-plugins&message=plugin_updated'));
+    exit;
+  }
+
+
 
   /**
    * Register settings with WordPress Settings API.
@@ -171,10 +341,13 @@ class MapifyMe_Admin
   {
     $value = esc_attr(MapifyMe_DB::get_setting('google_maps_api_key', ''));
   ?>
-    <input type="text" name="mapifyme_settings[google_maps_api_key]" id="google_maps_api_key" value="<?php echo esc_attr($value); ?>" />
-    <p class="description"><?php esc_html_e('Enter your Google Maps API key if you are using Google Maps as the provider.', 'mapifyme'); ?></p>
+    <div id="google_maps_api_key_wrapper">
+      <input type="text" name="mapifyme_settings[google_maps_api_key]" id="google_maps_api_key" value="<?php echo esc_attr($value); ?>" />
+      <p class="description"><?php esc_html_e('Enter your Google Maps API key if you are using Google Maps as the provider.', 'mapifyme'); ?></p>
+    </div>
     <?php
   }
+
 
   /**
    * Render post types selection field.
@@ -289,10 +462,11 @@ class MapifyMe_Admin
     }
 
     // Enqueue admin scripts for settings pages or global admin tasks
-    if ($hook_suffix === 'toplevel_page_mapifyme-settings') {
+    if ($hook_suffix === 'mapifyme_page_mapifyme-settings') { // Make sure this matches your settings page
       $script_path = MAPIFYME_PLUGIN_DIR . 'includes/admin/assets/js/mapifyme-admin.js';
       $script_url = MAPIFYME_PLUGIN_URL . 'includes/admin/assets/js/mapifyme-admin.js';
       $script_version = filemtime($script_path);
+
       wp_enqueue_script(
         'mapifyme-admin-script-settings',
         $script_url,

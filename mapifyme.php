@@ -2,21 +2,21 @@
 
 /**
  * Plugin Name: MapifyMe
- * Plugin URI:        https://mapifyme.com
- * Author URI:        https://mapifyme.com
+ * Plugin URI: https://mapifyme.com
+ * Author URI: https://mapifyme.com
  * Description: A modular geolocation plugin for WordPress with advanced proximity search and geotagging features.
  * Version: 1.0.0
  * Requires at least: 5.6
- * Tested up to:      6.6.1
+ * Tested up to: 6.6.1
  * Author: NOOBBase
  * Text Domain: mapifyme
  * Domain Path: /languages
- * Requires PHP:      7.0
- * License:           GNU General Public License v2.0
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.html
+ * Requires PHP: 7.0
+ * License: GNU General Public License v2.0
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 
-if (! defined('WPINC')) {
+if (!defined('WPINC')) {
   die;
 }
 
@@ -36,12 +36,15 @@ require_once MAPIFYME_PLUGIN_DIR . 'includes/modules/geotag-post-types/class-map
 require_once MAPIFYME_PLUGIN_DIR . 'includes/modules/maps/class-mapifyme-maps.php';
 require_once MAPIFYME_PLUGIN_DIR . 'includes/front/class-mapifyme-front.php';
 
+// Include the plugin management class
+require_once MAPIFYME_PLUGIN_DIR . 'includes/core/class-mapifyme-plugins.php';
+
 // Activation and deactivation hooks
 register_activation_hook(__FILE__, array('MapifyMe_Activator', 'activate'));
 register_deactivation_hook(__FILE__, array('MapifyMe_Deactivator', 'deactivate'));
 
 /**
- * Load all plugin files from the "plugins" directory
+ * Load all plugin files from the "plugins" directory and register them.
  */
 function mapifyme_load_plugins_from_directory()
 {
@@ -60,7 +63,7 @@ function mapifyme_load_plugins_from_directory()
 }
 
 /**
- * Initialize the plugin
+ * Initialize the plugin.
  */
 function run_mapifyme()
 {
@@ -88,8 +91,14 @@ function run_mapifyme()
   // Load additional plugins from the "plugins" directory
   mapifyme_load_plugins_from_directory();
 
+  // Initialize the registered plugins
+  MapifyMe_Plugins::init_plugins();
+
   // Run the plugin loader to hook everything
   $plugin_loader->run();
 }
 
+/**
+ * MapifyMe Plugin initialization.
+ */
 run_mapifyme();
