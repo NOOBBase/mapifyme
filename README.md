@@ -5,7 +5,7 @@
 **Tags**: maps, geotagging, proximity search, geolocation  
 **Requires at least**: 5.6  
 **Tested up to**: 6.6.1
-**Stable tag**: 1.0.0  
+**Stable tag**: 1.0.2  
 **License**: GPLv2 or later  
 **License URI**: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -64,14 +64,21 @@ A: You can choose your map provider in the plugin settings. Both Google Maps and
 ### 1.0.0
 
 - Initial release of MapifyMe.
-- Added geotagging for posts and BuddyPress members.
+
+### 1.0.1
+
+- Added current location plugin
 - Support for proximity search and mashup maps.
+
+### 1.0.2
+
+- Added current proximity search plugin
+- Added googgle maps as fully working
+- And some small bug fixes
 
 ## Upgrade Notice
 
-### 1.0.0
-
-Initial release. No upgrade necessary.
+just download and install the plugin. wordpress does the rest
 
 ## License
 

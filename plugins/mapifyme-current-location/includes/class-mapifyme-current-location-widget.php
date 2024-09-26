@@ -30,6 +30,8 @@ class MapifyMe_Current_Location_Widget extends WP_Widget
       'map_height' => isset($instance['map_height']) ? $instance['map_height'] : '400px',
       'map_width' => isset($instance['map_width']) ? $instance['map_width'] : '100%',
       'show_address' => isset($instance['show_address']) ? $instance['show_address'] : 'true',
+      'zoom' => isset($instance['zoom']) ? $instance['zoom'] : '5',  // Add zoom
+      'map_provider' => isset($instance['map_provider']) ? $instance['map_provider'] : '',
     );
 
     // Output the map using the shortcode
@@ -49,6 +51,8 @@ class MapifyMe_Current_Location_Widget extends WP_Widget
       'map_height' => '400px',
       'map_width' => '100%',
       'show_address' => 'true',
+      'zoom' => '5',  // Default zoom
+      'map_provider' => '', // Default map provider
     );
 
     // Merge provided instance values with default values
@@ -64,7 +68,14 @@ class MapifyMe_Current_Location_Widget extends WP_Widget
       <label for="<?php echo esc_attr($this->get_field_id('map_height')); ?>"><?php esc_html_e('Map Height (e.g., 400px):', 'mapifyme'); ?></label>
       <input class="widefat" id="<?php echo esc_attr($this->get_field_id('map_height')); ?>" name="<?php echo esc_attr($this->get_field_name('map_height')); ?>" type="text" value="<?php echo esc_attr($instance['map_height']); ?>">
     </p>
-
+    <p>
+      <label for="<?php echo esc_attr($this->get_field_id('zoom')); ?>"><?php esc_html_e('Zoom Level (e.g., 5):', 'mapifyme'); ?></label>
+      <input class="widefat" id="<?php echo esc_attr($this->get_field_id('zoom')); ?>" name="<?php echo esc_attr($this->get_field_name('zoom')); ?>" type="number" min="1" max="20" value="<?php echo esc_attr($instance['zoom']); ?>">
+    </p>
+    <p>
+      <label for="<?php echo esc_attr($this->get_field_id('map_provider')); ?>"><?php esc_html_e('Map Provider (e.g., leaflet, google_maps):', 'mapifyme'); ?></label>
+      <input class="widefat" id="<?php echo esc_attr($this->get_field_id('map_provider')); ?>" name="<?php echo esc_attr($this->get_field_name('map_provider')); ?>" type="text" value="<?php echo esc_attr($instance['map_provider']); ?>">
+    </p>
     <p>
       <label for="<?php echo esc_attr($this->get_field_id('map_width')); ?>"><?php esc_html_e('Map Width (e.g., 100%):', 'mapifyme'); ?></label>
       <input class="widefat" id="<?php echo esc_attr($this->get_field_id('map_width')); ?>" name="<?php echo esc_attr($this->get_field_name('map_width')); ?>" type="text" value="<?php echo esc_attr($instance['map_width']); ?>">
@@ -84,6 +95,8 @@ class MapifyMe_Current_Location_Widget extends WP_Widget
     $instance['title'] = (!empty($new_instance['title'])) ? sanitize_text_field($new_instance['title']) : '';
     $instance['map_height'] = (!empty($new_instance['map_height'])) ? sanitize_text_field($new_instance['map_height']) : '400px';
     $instance['map_width'] = (!empty($new_instance['map_width'])) ? sanitize_text_field($new_instance['map_width']) : '100%';
+    $instance['zoom'] = (!empty($new_instance['zoom'])) ? sanitize_text_field($new_instance['zoom']) : '5';
+    $instance['map_provider'] = (!empty($new_instance['map_provider'])) ? sanitize_text_field($new_instance['map_provider']) : '';
 
     $fields = array('show_latitude', 'show_longitude', 'show_map', 'show_address');
 

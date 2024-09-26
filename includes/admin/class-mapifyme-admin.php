@@ -13,7 +13,50 @@ class MapifyMe_Admin
     add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts')); // Add admin scripts
     // Hook for handling plugin activation/deactivation.
     add_action('admin_post_mapifyme_plugin_activation', array($this, 'handle_plugin_activation'));
+    // Add AJAX hook to validate API key
+    add_action('wp_ajax_mapifyme_validate_google_api_key', array($this, 'validate_google_api_key'));
   }
+
+
+  /**
+   * Validate the Google Maps API key.
+   */
+  // Update the validation function to use the Places API.
+  public function validate_google_api_key()
+  {
+    // Verify the nonce for security
+    check_ajax_referer('mapifyme_google_api_key_nonce', 'nonce');
+
+    // Get the API key from the request
+    $api_key = isset($_POST['api_key']) ? sanitize_text_field($_POST['api_key']) : '';
+
+    if (empty($api_key)) {
+      wp_send_json_error(array('message' => __('API key is missing.', 'mapifyme')));
+      return;
+    }
+
+    // Use the Google Places API to validate the key
+    $response = wp_remote_get("https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurant&key=$api_key");
+
+    if (is_wp_error($response)) {
+      wp_send_json_error(array('message' => __('Failed to validate the API key.', 'mapifyme')));
+    } else {
+      $body = wp_remote_retrieve_body($response);
+      $data = json_decode($body, true);
+
+      // Check if the API key is valid
+      if (isset($data['error_message'])) {
+        wp_send_json_error(array('message' => __('Invalid API key: ', 'mapifyme') . $data['error_message']));
+      } else {
+        wp_send_json_success(array('message' => __('API key is valid!', 'mapifyme')));
+      }
+    }
+
+    wp_die();
+  }
+
+
+
 
   /**
    * Add the MapifyMe admin menu.
@@ -313,10 +356,18 @@ class MapifyMe_Admin
   {
     MapifyMe_DB::update_setting('map_provider', sanitize_text_field($settings['map_provider']));
     MapifyMe_DB::update_setting('google_maps_api_key', sanitize_text_field($settings['google_maps_api_key']));
-    MapifyMe_DB::update_setting('enabled_post_types', array_map('sanitize_text_field', $settings['enabled_post_types']));
+
+    // Check if 'enabled_post_types' is set and is an array, otherwise set it to an empty array
+    if (isset($settings['enabled_post_types']) && is_array($settings['enabled_post_types'])) {
+      MapifyMe_DB::update_setting('enabled_post_types', array_map('sanitize_text_field', $settings['enabled_post_types']));
+    } else {
+      MapifyMe_DB::update_setting('enabled_post_types', array()); // Save an empty array if no post types are selected
+    }
+
     MapifyMe_DB::update_setting('popup_template', sanitize_text_field($settings['popup_template'])); // Save popup template
     MapifyMe_DB::update_setting('rate_limit', intval($settings['rate_limit']));
     MapifyMe_DB::update_setting('rate_limit_time', intval($settings['rate_limit_time']));
+
     return $settings;
   }
 
@@ -343,10 +394,13 @@ class MapifyMe_Admin
   ?>
     <div id="google_maps_api_key_wrapper">
       <input type="text" name="mapifyme_settings[google_maps_api_key]" id="google_maps_api_key" value="<?php echo esc_attr($value); ?>" />
-      <p class="description"><?php esc_html_e('Enter your Google Maps API key if you are using Google Maps as the provider.', 'mapifyme'); ?></p>
+      <p class="description"><?php esc_html_e('Enter your Google Maps API key. It will be validated when you save.', 'mapifyme'); ?></p>
     </div>
+    <!-- This is where the feedback message will appear -->
+    <div id="api-validation-feedback"></div>
     <?php
   }
+
 
 
   /**
@@ -411,68 +465,106 @@ class MapifyMe_Admin
    */
   public function enqueue_admin_scripts($hook_suffix)
   {
-    if ($hook_suffix === 'post.php' || $hook_suffix === 'post-new.php') {
-      // Enqueue Leaflet CSS and JS first
-      wp_enqueue_style('leaflet-css', MAPIFYME_PLUGIN_URL . 'assets/lib/leaflet/leaflet.css', array(), '1.9.4');
-      wp_enqueue_script('leaflet-js', MAPIFYME_PLUGIN_URL . 'assets/lib/leaflet/leaflet.js', array(), "1.9.4", true);
-
-      // Enqueue initialize-maps.js (our main map initialization script)
-      wp_enqueue_script(
-        'mapifyme-initialize-maps',
-        MAPIFYME_PLUGIN_URL . 'includes/admin/assets/js/initialize-maps.js',
-        array('leaflet-js', 'jquery'),
-        "1.0.0",
-        true
-      );
-
-      // Enqueue mapifyme-geotag.js, which depends on initialize-maps.js
-      wp_enqueue_script(
-        'mapifyme-geotag',
-        MAPIFYME_PLUGIN_URL . 'includes/admin/assets/js/mapifyme-geotag.js',
-        array('mapifyme-initialize-maps', 'jquery'),
-        "1.0.0",
-        true
-      );
-
-      // Enqueue other custom admin scripts if necessary
-      wp_enqueue_script(
-        'mapifyme-admin-script',
-        MAPIFYME_PLUGIN_URL . 'includes/admin/assets/js/mapifyme-admin.js',
-        array('jquery'),
-        "1.0.0",
-        true
-      );
-
-      // Custom styles for the admin map
-      wp_enqueue_style(
-        'mapifyme-admin-css',
-        MAPIFYME_PLUGIN_URL .
-          'includes/admin/assets/css/admin.css',
-        array(),
-        '1.0.0'
-      );
-
-      // Localize the mapifyme-geotag.js for AJAX and geocoding URLs
-      wp_localize_script('mapifyme-geotag', 'mapifymeGeotag', array(
-        'geocode_api_url' => 'https://nominatim.openstreetmap.org/search',
-        'reverse_geocode_api_url' => 'https://nominatim.openstreetmap.org/reverse',
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('mapifyme_update_geotag_data_nonce'),
-      ));
-    }
+    // Fetch the selected map provider
+    $map_provider = MapifyMe_DB::get_setting('map_provider', 'leaflet');
 
     // Enqueue admin scripts for settings pages or global admin tasks
-    if ($hook_suffix === 'mapifyme_page_mapifyme-settings') { // Make sure this matches your settings page
-      $script_path = MAPIFYME_PLUGIN_DIR . 'includes/admin/assets/js/mapifyme-admin.js';
-      $script_url = MAPIFYME_PLUGIN_URL . 'includes/admin/assets/js/mapifyme-admin.js';
-      $script_version = filemtime($script_path);
-
+    if ($hook_suffix === 'mapifyme_page_mapifyme-settings') {
+      // Enqueue admin scripts for the settings page
       wp_enqueue_script(
         'mapifyme-admin-script-settings',
-        $script_url,
+        MAPIFYME_PLUGIN_URL . 'includes/admin/assets/js/mapifyme-admin.js',
         array('jquery'),
-        $script_version,
+        filemtime(MAPIFYME_PLUGIN_DIR . 'includes/admin/assets/js/mapifyme-admin.js'),
         true
+      );
+
+      // Enqueue the Google API validation script if Google Maps is selected
+      if ($map_provider === 'google_maps') {
+        wp_enqueue_script(
+          'mapifyme-admin-validate-api',
+          MAPIFYME_PLUGIN_URL . 'includes/admin/assets/js/mapifyme-validate-api.js',
+          array('jquery'),
+          '1.0.0',
+          true
+        );
+
+        // Localize the validation script to pass AJAX URL and nonce
+        wp_localize_script('mapifyme-admin-validate-api', 'mapifymeApiValidation', array(
+          'ajax_url' => admin_url('admin-ajax.php'),
+          'nonce' => wp_create_nonce('mapifyme_google_api_key_nonce'),
+        ));
+      }
+    }
+
+    // Enqueue scripts for post editor pages (map integration)
+    if ($hook_suffix === 'post.php' || $hook_suffix === 'post-new.php') {
+      if ($map_provider === 'leaflet') {
+        // Enqueue Leaflet CSS and JS
+        wp_enqueue_style('leaflet-css', MAPIFYME_PLUGIN_URL . 'assets/lib/leaflet/leaflet.css', array(), '1.9.4');
+        wp_enqueue_script('leaflet-js', MAPIFYME_PLUGIN_URL . 'assets/lib/leaflet/leaflet.js', array(), '1.9.4', true);
+
+        // Enqueue initialize-maps.js for Leaflet
+        wp_enqueue_script(
+          'mapifyme-initialize-maps',
+          MAPIFYME_PLUGIN_URL . 'includes/admin/assets/js/initialize-maps.js',
+          array('leaflet-js', 'jquery'),
+          '1.0.0',
+          true
+        );
+
+        // Enqueue mapifyme-geotag.js for Leaflet
+        wp_enqueue_script(
+          'mapifyme-geotag',
+          MAPIFYME_PLUGIN_URL . 'includes/admin/assets/js/mapifyme-geotag.js',
+          array('mapifyme-initialize-maps', 'jquery'),
+          '1.0.0',
+          true
+        );
+
+        // Localize the mapifyme-geotag.js for Leaflet
+        wp_localize_script('mapifyme-geotag', 'mapifymeGeotag', array(
+          'geocode_api_url' => 'https://nominatim.openstreetmap.org/search',
+          'reverse_geocode_api_url' => 'https://nominatim.openstreetmap.org/reverse',
+          'ajax_url' => admin_url('admin-ajax.php'),
+          'nonce' => wp_create_nonce('mapifyme_update_geotag_data_nonce'),
+        ));
+      } elseif ($map_provider === 'google_maps') {
+        // Enqueue Google Maps API script if Google Maps is selected
+        $google_maps_api_key = MapifyMe_DB::get_setting('google_maps_api_key', '');
+        if (!empty($google_maps_api_key)) {
+          wp_enqueue_script(
+            'google-maps-js',
+            'https://maps.googleapis.com/maps/api/js?key=' . esc_attr($google_maps_api_key),
+            array(),
+            '3',
+            true
+          );
+
+          // Enqueue Google Maps initialization script
+          wp_enqueue_script(
+            'mapifyme-initialize-google-maps',
+            MAPIFYME_PLUGIN_URL . 'includes/admin/assets/js/initialize-google-maps.js',
+            array('google-maps-js', 'jquery'),
+            '1.0.0',
+            true
+          );
+
+
+          // Localize the Google Maps specific script
+          wp_localize_script('mapifyme-initialize-google-maps', 'mapifymeGeotag', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('mapifyme_update_geotag_data_nonce'),
+          ));
+        }
+      }
+
+      // Enqueue custom admin styles
+      wp_enqueue_style(
+        'mapifyme-admin-css',
+        MAPIFYME_PLUGIN_URL . 'includes/admin/assets/css/admin.css',
+        array(),
+        '1.0.0'
       );
     }
   }

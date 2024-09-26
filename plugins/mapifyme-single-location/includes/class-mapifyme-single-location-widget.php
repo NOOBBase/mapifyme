@@ -34,7 +34,8 @@ class MapifyMe_Single_Location_Widget extends WP_Widget
       if (isset($post->ID)) {
         $instance['location_id'] = $post->ID;  // Dynamically use the current post ID
       } else {
-        echo '<p>' . __('No location specified.', 'mapifyme') . '</p>';
+        echo '<p>' . esc_html__('No location specified.', 'mapifyme') . '</p>';
+
         return;
       }
     }
@@ -59,6 +60,7 @@ class MapifyMe_Single_Location_Widget extends WP_Widget
       'show_category' => isset($instance['show_category']) ? $instance['show_category'] : 'true',
       'show_tags' => isset($instance['show_tags']) ? $instance['show_tags'] : 'true',
       'show_author' => isset($instance['show_author']) ? $instance['show_author'] : 'true',
+      'zoom' => isset($instance['zoom']) ? $instance['zoom'] : '13',
     );
 
     // Output the map using the shortcode
@@ -90,6 +92,7 @@ class MapifyMe_Single_Location_Widget extends WP_Widget
       'show_category' => 'true',
       'show_tags' => 'true',
       'show_author' => 'true',
+      'zoom' => '13',
     );
 
     // Merge provided instance values with default values
@@ -98,14 +101,19 @@ class MapifyMe_Single_Location_Widget extends WP_Widget
     // Output form fields for each setting
 ?>
     <p>
-      <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php esc_html_e('Your text here', 'mapifyme'); ?></label>
+      <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php esc_html_e('Title', 'mapifyme'); ?></label>
       <input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')); ?>" name="<?php echo esc_attr($this->get_field_name('title')); ?>" type="text" value="<?php echo esc_attr($instance['title']); ?>">
     </p>
 
     <p>
-      <label for="<?php echo esc_attr($this->get_field_id('location_id')); ?>"><?php esc_html_e('Your text here', 'mapifyme'); ?></label>
+      <label for="<?php echo esc_attr($this->get_field_id('location_id')); ?>"><?php esc_html_e('Post ID to show(leave empty to fetch curernt post)', 'mapifyme'); ?></label>
       <input class="widefat" id="<?php echo esc_attr($this->get_field_id('location_id')); ?>" name="<?php echo esc_attr($this->get_field_name('location_id')); ?>" type="text" value="<?php echo esc_attr($instance['location_id']); ?>">
     </p>
+    <p>
+      <label for="<?php echo esc_attr($this->get_field_id('zoom')); ?>"><?php esc_html_e('Zoom Level:', 'mapifyme'); ?></label>
+      <input class="widefat" id="<?php echo esc_attr($this->get_field_id('zoom')); ?>" name="<?php echo esc_attr($this->get_field_name('zoom')); ?>" type="number" value="<?php echo esc_attr($instance['zoom']); ?>">
+    </p>
+
 
     <p>
       <label for="<?php echo esc_attr($this->get_field_id('popup_template')); ?>"><?php esc_html_e('Popup Template:', 'mapifyme'); ?></label>
@@ -137,7 +145,7 @@ class MapifyMe_Single_Location_Widget extends WP_Widget
     $instance['title'] = (!empty($new_instance['title'])) ? sanitize_text_field($new_instance['title']) : '';
     $instance['location_id'] = (!empty($new_instance['location_id'])) ? sanitize_text_field($new_instance['location_id']) : '';
     $instance['popup_template'] = (!empty($new_instance['popup_template'])) ? sanitize_text_field($new_instance['popup_template']) : '';
-
+    $instance['zoom'] = (!empty($new_instance['zoom'])) ? sanitize_text_field($new_instance['zoom']) : '13';
     $fields = array(
       'show_latitude',
       'show_longitude',

@@ -21,12 +21,13 @@ function initializeGeolocationMaps(retries = 5) {
     const showAddress =
       mapContainer.getAttribute('data-show-address') === 'true';
 
-    // Ensure the infoContainer exists based on the dynamically generated ID
+    // Retrieve the zoom level from the HTML attribute or fallback to a default value (e.g., 13)
+    const zoomLevel = mapContainer.getAttribute('data-zoom') || 13; // Default zoom level to 13 if not provided
+
     const infoContainer = document.getElementById(`${mapContainerId}-info`);
 
     if (!mapContainer) {
       console.error(`Map container with ID ${mapContainerId} not found.`);
-
       if (retries > 0) {
         setTimeout(function () {
           initializeGeolocationMaps(retries - 1);
@@ -42,18 +43,15 @@ function initializeGeolocationMaps(retries = 5) {
       return;
     }
 
-    // Ensure the browser supports geolocation
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         function (position) {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
 
-          // Set draggableMarker based on a condition or default it to false
           const draggableMarker =
             mapContainer.getAttribute('data-draggable') === 'true';
 
-          // Display the current latitude and longitude
           if (showLatitude || showLongitude) {
             let infoText =
               '<strong>' +
@@ -69,8 +67,11 @@ function initializeGeolocationMaps(retries = 5) {
             infoContainer.innerHTML = infoText;
           }
 
-          // Initialize the map using Leaflet
-          const map = L.map(mapContainer).setView([latitude, longitude], 13);
+          // Initialize the map using Leaflet with the specified zoom level
+          const map = L.map(mapContainer).setView(
+            [latitude, longitude],
+            parseInt(zoomLevel)
+          ); // Use zoom level here
 
           // Add OpenStreetMap tiles
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -78,11 +79,8 @@ function initializeGeolocationMaps(retries = 5) {
               'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
           }).addTo(map);
 
-          // Use the localized custom popup template
           let popupContent =
             mapifymeGeotag.custom_popup_template || '<b>You are here!</b>';
-
-          // Replace placeholders in the custom popup template
           if (mapifymeGeotag.custom_popup_template) {
             popupContent = popupContent
               .replace('{latitude}', latitude)
@@ -98,14 +96,12 @@ function initializeGeolocationMaps(retries = 5) {
           }).addTo(map);
           marker.bindPopup(popupContent).openPopup();
 
-          // Optionally fetch and display the address using reverse geocoding
           if (showAddress) {
             reverseGeocode(latitude, longitude, function (address) {
               const addressLabel = mapifymeGeotag.address_label || 'Address';
               infoContainer.innerHTML +=
                 `<br><strong>${addressLabel}:</strong><br>` + address;
 
-              // Update the popup content with the address
               if (mapifymeGeotag.custom_popup_template) {
                 const updatedPopupContent = mapifymeGeotag.custom_popup_template
                   .replace('{latitude}', latitude)
@@ -128,7 +124,7 @@ function initializeGeolocationMaps(retries = 5) {
   });
 }
 
-function reverseGeocode(lat, lon, mapId) {
+function reverseGeocode(lat, lon, callback) {
   if (
     typeof mapifymeGeotag === 'undefined' ||
     !mapifymeGeotag.reverse_geocode_api_url
@@ -151,16 +147,12 @@ function reverseGeocode(lat, lon, mapId) {
         if (data && data.display_name) {
           const address = data.display_name;
           mapifymeGeotag.address = address;
-          console.log('Address:', address);
-          jQuery(document).trigger('mapifymeAddressFetched', {
-            mapId: mapId,
-            address: address,
-          });
+          callback(address);
         } else {
           alert('Address not found for these coordinates.');
         }
       })
-      .fail(function (jqXHR, textStatus, errorThrown) {
+      .fail(function () {
         alert('Error fetching address.');
       });
   } else {

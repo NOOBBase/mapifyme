@@ -1,4 +1,4 @@
-<div class="popup-template-2">
+<div class="popup-template-1">
   <!-- Display post title -->
   <?php if (!empty($fields['title'])): ?>
     <h4 class="popup-title"><?php echo esc_html($fields['title']); ?></h4>
@@ -7,7 +7,7 @@
   <!-- Display post content -->
   <?php if (!empty($fields['content'])): ?>
     <div class="popup-content">
-      <?php echo wp_kses_post($fields['content']); // Safely display post content 
+      <?php echo wp_kses_post($fields['content']); // Properly escapes content with allowed HTML 
       ?>
     </div>
   <?php endif; ?>

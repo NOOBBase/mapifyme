@@ -41,7 +41,13 @@ class MapifyMe_Single_Location_Shortcode
       'show_category' => 'true',
       'show_tags' => 'true',
       'show_author' => 'true',
-      'popup_template' => $global_popup_template, // Set the global template as default
+      'popup_template' => $global_popup_template,
+      'zoom' => '13', // Default zoom level
+      'map_provider' => '', // Allow map_provider override via shortcode
+      'enable_geolocation' => 'false', // Default geolocation to false
+      'showGetLocationButton' => 'false', // Default to hiding the button
+      'map_height' => '400px',
+      'map_width' => '100%',
     ), $atts);
 
     // If 'id' is not provided, use the global post ID dynamically
@@ -73,7 +79,7 @@ class MapifyMe_Single_Location_Shortcode
       $fields['title'] = esc_html(get_the_title($post));
     }
     if ($atts['show_street'] === 'true') {
-      $fields['address'] = esc_html($location_data['street'] ?? '');
+      $fields['street'] = esc_html($location_data['street'] ?? '');
     }
     if ($atts['show_city'] === 'true') {
       $fields['city'] = esc_html($location_data['city'] ?? '');
@@ -91,23 +97,33 @@ class MapifyMe_Single_Location_Shortcode
       $fields['website'] = esc_url($location_data['website'] ?? '');
     }
     if ($atts['show_content'] === 'true') {
-      $fields['content'] = wp_kses_post(apply_filters('the_content', $post->post_content));
+      // Get the post content without applying filters yet
+      $content = $post->post_content;
+
+      // Strip all shortcodes before applying filters
+      $content = strip_shortcodes($content);
+
+      // Apply WordPress content filters to the stripped content
+      $content = apply_filters('the_content', $content);
+
+      // Sanitize the content to prevent XSS
+      $fields['content'] = wp_kses_post($content);
     }
+
     if ($atts['show_category'] === 'true') {
-      $fields['category'] = get_the_category_list(', ', '', $post->ID);
+      $categories = wp_get_post_categories($post->ID);
+      if (!empty($categories)) {
+        $category_names = array_map('get_cat_name', $categories);
+        $fields['category'] = implode(', ', $category_names); // Show categories as plain text
+      }
     }
+
     if ($atts['show_tags'] === 'true') {
       $fields['tags'] = get_the_tag_list('', ', ', '', $post->ID);
     }
     if ($atts['show_author'] === 'true') {
       $fields['author'] = get_the_author_meta('display_name', $post->post_author);
     }
-
-    // Encode fields for the data-popup attribute
-    $popup_content = wp_json_encode($fields);
-
-    // Generate a unique map container ID
-    $map_container_id = 'mapifyme-single-location-map-' . esc_attr($atts['id']) . '-' . uniqid();
 
     // Fetch the selected popup template
     $popup_template = 'popup-' . esc_attr($atts['popup_template']); // Set template based on shortcode attribute or default
@@ -126,33 +142,67 @@ class MapifyMe_Single_Location_Shortcode
     include($template_path); // The template will use $fields for rendering
     $popup_html = ob_get_clean();
 
-    // Add the map container HTML
-    $output = '<div id="' . $map_container_id . '" 
+    // Prepare the markers array
+    $markers = array(
+      array(
+        'latitude' => $location_data['latitude'],
+        'longitude' => $location_data['longitude'],
+        'popup_content' => $popup_html  // Make sure this contains valid HTML
+      )
+    );
+
+
+
+    // Encode the markers for passing to JavaScript
+    $markers_json = wp_json_encode($markers);
+
+    // Generate a unique map container ID
+    $map_container_id = 'mapifyme-single-location-map-' . esc_attr($atts['id']) . '-' . uniqid();
+
+    // Generate map container
+    $output = '<div id="' . esc_attr($map_container_id) . '" 
                   data-mapifyme-map 
                   data-latitude="' . esc_attr($location_data['latitude']) . '" 
                   data-longitude="' . esc_attr($location_data['longitude']) . '" 
-                  data-popup-html=\'' . esc_attr($popup_html) . '\' 
-                  data-template="' . esc_attr($atts['popup_template']) . '" 
-                  style="width: 100%; height: 500px;"></div>';
+                  data-zoom="' . esc_attr($atts['zoom']) . '"  
+                  data-markers=\'' . esc_attr($markers_json) . '\' 
+                  data-map-provider="' . esc_attr($atts['map_provider']) . '" 
+                  style="width: ' . esc_attr($atts['map_width']) . '; height: ' . esc_attr($atts['map_height']) . ';"></div>';
 
-    // Enqueue map processor
-    $this->enqueue_map_processor($location_data, $map_container_id);
+
+    // Enqueue map processor by passing the $map_container_id and $markers array
+    $this->enqueue_map_processor($map_container_id, $markers, filter_var($atts['enable_geolocation'], FILTER_VALIDATE_BOOLEAN), intval($atts['zoom']), esc_attr($atts['map_provider']), filter_var($atts['showGetLocationButton'], FILTER_VALIDATE_BOOLEAN));
 
     $is_processing = false;
     return $output;
   }
 
-
-  private function enqueue_map_processor($location_data, $map_container_id)
+  private function enqueue_map_processor($map_container_id, $markers, $enable_geolocation = false, $zoom_level = 13, $map_provider = null, $showGetLocationButton = false)
   {
     $mapifyme_maps = new MapifyMe_Maps();
-    $mapifyme_maps->enqueue_map_processor_scripts();
+
+    // Use the first marker's latitude and longitude for map center
+    $latitude = isset($markers[0]['latitude']) ? floatval($markers[0]['latitude']) : 0;
+    $longitude = isset($markers[0]['longitude']) ? floatval($markers[0]['longitude']) : 0;
+
+    // Pass the markers array to the map processor
+    $mapifyme_maps->enqueue_map_processor_scripts(
+      $map_container_id,
+      $markers,
+      $latitude,
+      $longitude,
+      $enable_geolocation,
+      $showGetLocationButton,
+      $map_provider,
+      $zoom_level
+    );
   }
+
 
   private function get_location_data($id, $type)
   {
     if ($type === 'post') {
-      return MapifyMe_DB::get_post_data($id);
+      return MapifyMe_DB::get_post_data($id); // Ensure this function returns title, address, etc.
     }
     return false;
   }

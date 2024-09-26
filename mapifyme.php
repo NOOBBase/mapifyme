@@ -5,7 +5,7 @@
  * Plugin URI: https://mapifyme.com
  * Author URI: https://mapifyme.com
  * Description: A modular geolocation plugin for WordPress with advanced proximity search and geotagging features.
- * Version: 1.0.0
+ * Version: 1.0.2
  * Requires at least: 5.6
  * Tested up to: 6.6.1
  * Author: NOOBBase

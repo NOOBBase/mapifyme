@@ -9,14 +9,15 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-09-23T15:41:37+02:00\n"
+"POT-Creation-Date: 2024-09-25T13:39:01+02:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: mapifyme\n"
 
 #. Plugin Name of the plugin
 #: mapifyme.php
-#: includes/admin/class-mapifyme-admin.php:23
+#: includes/admin/class-mapifyme-admin.php:68
+#: includes/admin/class-mapifyme-admin.php:69
 msgid "MapifyMe"
 msgstr ""
 
@@ -36,80 +37,228 @@ msgstr ""
 msgid "NOOBBase"
 msgstr ""
 
-#: includes/admin/class-mapifyme-admin.php:22
-#: includes/admin/class-mapifyme-admin.php:39
+#: assets/templates/current-location/popup-template1.php:12
+#: assets/templates/current-location/popup-template2.php:2
+#: includes/modules/maps/class-mapifyme-maps.php:134
+msgid "You are here!"
+msgstr ""
+
+#: assets/templates/current-location/popup-template1.php:14
+#: assets/templates/current-location/popup-template2.php:4
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:225
+msgid "Latitude:"
+msgstr ""
+
+#: assets/templates/current-location/popup-template1.php:15
+#: assets/templates/current-location/popup-template2.php:5
+#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:229
+msgid "Longitude:"
+msgstr ""
+
+#: assets/templates/current-location/popup-template1.php:16
+#: assets/templates/current-location/popup-template2.php:6
+msgid "Address:"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:34
+msgid "API key is missing."
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:42
+msgid "Failed to validate the API key."
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:49
+msgid "Invalid API key: "
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:51
+msgid "API key is valid!"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:80
+#: includes/admin/class-mapifyme-admin.php:143
 msgid "MapifyMe Settings"
 msgstr ""
 
-#: includes/admin/class-mapifyme-admin.php:61
-msgid "Map Provider Settings"
+#: includes/admin/class-mapifyme-admin.php:81
+msgid "Settings"
 msgstr ""
 
-#: includes/admin/class-mapifyme-admin.php:68
-msgid "Choose Map Provider"
+#: includes/admin/class-mapifyme-admin.php:90
+#: includes/admin/class-mapifyme-admin.php:168
+msgid "MapifyMe Plugins"
 msgstr ""
 
-#: includes/admin/class-mapifyme-admin.php:76
-msgid "Google Maps API Key"
+#: includes/admin/class-mapifyme-admin.php:91
+msgid "Plugins"
 msgstr ""
 
-#: includes/admin/class-mapifyme-admin.php:85
-msgid "Post Type Settings"
-msgstr ""
-
-#: includes/admin/class-mapifyme-admin.php:92
-msgid "Enable Post Types for Geotagging"
-msgstr ""
-
-#: includes/admin/class-mapifyme-admin.php:101
-msgid "Popup Template Settings"
+#: includes/admin/class-mapifyme-admin.php:107
+msgid "Welcome to MapifyMe"
 msgstr ""
 
 #: includes/admin/class-mapifyme-admin.php:108
-msgid "Select Popup Template"
+msgid "Thank you for using MapifyMe. Check out our premium features to enhance your experience!"
 msgstr ""
 
-#: includes/admin/class-mapifyme-admin.php:117
-msgid "Rate Limiting Settings"
+#: includes/admin/class-mapifyme-admin.php:110
+msgid "Premium Features"
 msgstr ""
 
-#: includes/admin/class-mapifyme-admin.php:124
-msgid "Rate Limiting - Max Requests Per IP"
+#: includes/admin/class-mapifyme-admin.php:112
+msgid "Advanced Geolocation Tools"
 msgstr ""
 
-#: includes/admin/class-mapifyme-admin.php:132
-msgid "Rate Limiting - Time Period (Minutes)"
+#: includes/admin/class-mapifyme-admin.php:113
+msgid "Unlimited Proximity Search Forms"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:114
+msgid "Customizable Map Themes"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:115
+msgid "Premium Support"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:119
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:121
+msgid "Upgrade Now"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:126
+msgid "Learn More"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:127
+msgid "Explore our tutorials, guides, and community forums to make the most out of MapifyMe."
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:129
+msgid "Documentation"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:130
+msgid "Community Forums"
 msgstr ""
 
 #: includes/admin/class-mapifyme-admin.php:161
-msgid "Leaflet (Default)"
+msgid "Plugin status updated."
 msgstr ""
 
-#: includes/admin/class-mapifyme-admin.php:162
-msgid "Google Maps"
+#: includes/admin/class-mapifyme-admin.php:173
+msgid "Plugin Name"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:174
+msgid "Version"
 msgstr ""
 
 #: includes/admin/class-mapifyme-admin.php:175
-msgid "Enter your Google Maps API key if you are using Google Maps as the provider."
+msgid "Status"
 msgstr ""
 
-#: includes/admin/class-mapifyme-admin.php:205
+#: includes/admin/class-mapifyme-admin.php:176
+msgid "Directory"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:204
+msgid "Active"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:204
+msgid "Inactive"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:212
+msgid "No plugins are registered."
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:238
+msgid "This plugin cannot be disabled."
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:245
+msgid "Plugin activated successfully!"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:249
+msgid "Plugin deactivated successfully!"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:274
+msgid "Map Provider Settings"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:281
+msgid "Choose Map Provider"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:289
+msgid "Google Maps API Key"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:298
+msgid "Post Type Settings"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:305
+msgid "Enable Post Types for Geotagging"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:314
+msgid "Popup Template Settings"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:321
+msgid "Select Popup Template"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:330
+msgid "Rate Limiting Settings"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:337
+msgid "Rate Limiting - Max Requests Per IP"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:345
+msgid "Rate Limiting - Time Period (Minutes)"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:382
+msgid "Leaflet (Default)"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:383
+msgid "Google Maps"
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:397
+msgid "Enter your Google Maps API key. It will be validated when you save."
+msgstr ""
+
+#: includes/admin/class-mapifyme-admin.php:432
 msgid "Template 1"
 msgstr ""
 
-#: includes/admin/class-mapifyme-admin.php:206
+#: includes/admin/class-mapifyme-admin.php:433
 msgid "Template 2"
 msgstr ""
 
-#: includes/admin/class-mapifyme-admin.php:208
+#: includes/admin/class-mapifyme-admin.php:435
 msgid "Choose a popup template for displaying map location details."
 msgstr ""
 
-#: includes/admin/class-mapifyme-admin.php:220
+#: includes/admin/class-mapifyme-admin.php:447
 msgid "Set the maximum number of requests allowed per IP within the specified time period."
 msgstr ""
 
-#: includes/admin/class-mapifyme-admin.php:232
+#: includes/admin/class-mapifyme-admin.php:459
 msgid "Set the time period (in minutes) during which the rate limit is enforced."
 msgstr ""
 
@@ -158,19 +307,12 @@ msgid "Geo Location"
 msgstr ""
 
 #: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:197
+#: includes/modules/maps/class-mapifyme-maps.php:135
 msgid "Address"
 msgstr ""
 
 #: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:198
 msgid "Contact"
-msgstr ""
-
-#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:225
-msgid "Latitude:"
-msgstr ""
-
-#: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:229
-msgid "Longitude:"
 msgstr ""
 
 #: includes/modules/geotag-post-types/class-mapifyme-geotag-post.php:233
@@ -213,96 +355,151 @@ msgstr ""
 msgid "Phone:"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-shortcode.php:50
-msgid "No location specified."
+#: includes/modules/maps/class-mapifyme-maps.php:136
+msgid "Unable to retrieve your location."
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-shortcode.php:57
-msgid "No location data found."
+#: includes/modules/maps/class-mapifyme-maps.php:137
+msgid "Geolocation is not supported by your browser."
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-shortcode.php:120
+#: plugins/mapifyme-current-location/includes/class-mapifyme-current-location-shortcode.php:62
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-shortcode.php:146
 msgid "Template not found:"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:12
-msgid "MapifyMe Single Location"
+#: plugins/mapifyme-current-location/includes/class-mapifyme-current-location-widget.php:12
+msgid "MapifyMe Current Location"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:13
-msgid "Display a single location map."
+#: plugins/mapifyme-current-location/includes/class-mapifyme-current-location-widget.php:13
+msgid "Display the user's current location on a map."
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:89
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:94
-msgid "Your text here"
+#: plugins/mapifyme-current-location/includes/class-mapifyme-current-location-widget.php:63
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:104
+msgid "Title"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:99
-msgid "Popup Template:"
+#: plugins/mapifyme-current-location/includes/class-mapifyme-current-location-widget.php:68
+msgid "Map Height (e.g., 400px):"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:100
-msgid "Leave empty for default"
+#: plugins/mapifyme-current-location/includes/class-mapifyme-current-location-widget.php:72
+msgid "Zoom Level (e.g., 5):"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:103
+#: plugins/mapifyme-current-location/includes/class-mapifyme-current-location-widget.php:76
+msgid "Map Provider (e.g., leaflet, google_maps):"
+msgstr ""
+
+#: plugins/mapifyme-current-location/includes/class-mapifyme-current-location-widget.php:80
+msgid "Map Width (e.g., 100%):"
+msgstr ""
+
+#: plugins/mapifyme-current-location/includes/class-mapifyme-current-location-widget.php:84
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:123
 msgid "Show Latitude"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:104
+#: plugins/mapifyme-current-location/includes/class-mapifyme-current-location-widget.php:85
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:124
 msgid "Show Longitude"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:105
+#: plugins/mapifyme-current-location/includes/class-mapifyme-current-location-widget.php:86
+msgid "Show Map"
+msgstr ""
+
+#: plugins/mapifyme-current-location/includes/class-mapifyme-current-location-widget.php:87
+msgid "Show Address"
+msgstr ""
+
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-shortcode.php:58
+msgid "No location specified or found."
+msgstr ""
+
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-shortcode.php:66
+msgid "No location data found."
+msgstr ""
+
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:12
+msgid "MapifyMe Single Location"
+msgstr ""
+
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:13
+msgid "Display a single location map."
+msgstr ""
+
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:37
+msgid "No location specified."
+msgstr ""
+
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:109
+msgid "Post ID to show(leave empty to fetch curernt post)"
+msgstr ""
+
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:113
+msgid "Zoom Level:"
+msgstr ""
+
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:119
+msgid "Popup Template:"
+msgstr ""
+
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:120
+msgid "Leave empty for default"
+msgstr ""
+
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:125
 msgid "Show Street"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:106
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:126
 msgid "Show City"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:107
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:127
 msgid "Show State"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:108
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:128
 msgid "Show Zip"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:109
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:129
 msgid "Show Country"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:110
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:130
 msgid "Show Website"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:111
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:131
 msgid "Show Email"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:112
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:132
 msgid "Show Phone"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:113
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:133
 msgid "Show Title"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:114
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:134
 msgid "Show Content"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:115
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:135
 msgid "Show Category"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:116
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:136
 msgid "Show Tags"
 msgstr ""
 
-#: plugins/mapifyme-single-location/class-mapifyme-single-location-widget.php:117
+#: plugins/mapifyme-single-location/includes/class-mapifyme-single-location-widget.php:137
 msgid "Show Author"
 msgstr ""
 

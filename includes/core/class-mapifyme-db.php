@@ -243,4 +243,150 @@ class MapifyMe_DB
 
     return $result;
   }
+
+  /**
+   * Retrieve posts with geotag data within a specified radius using the Haversine formula.
+   *
+   * @param float $latitude The center latitude.
+   * @param float $longitude The center longitude.
+   * @param float $radius The radius in kilometers.
+   * @param string $post_type The post type to filter (optional).
+   * @return array The list of posts with geodata.
+   */
+  public static function get_posts_within_radius($latitude, $longitude, $radius, $post_type = 'post')
+  {
+    global $wpdb;
+    $geodata_table = $wpdb->prefix . 'mapifyme_geodata';
+    $posts_table = $wpdb->prefix . 'posts';
+
+    $query = $wpdb->prepare(
+      "
+        SELECT p.ID, p.post_title, p.post_content, geo.latitude, geo.longitude,
+        (6371 * acos(
+            cos(radians(%f)) * cos(radians(geo.latitude)) *
+            cos(radians(geo.longitude) - radians(%f)) +
+            sin(radians(%f)) * sin(radians(geo.latitude))
+        )) AS distance
+        FROM $geodata_table geo
+        INNER JOIN $posts_table p ON p.ID = geo.post_id
+        WHERE p.post_type = %s
+        AND p.post_status = 'publish'
+        HAVING distance < %f
+        ORDER BY distance ASC
+        ",
+      $latitude,
+      $longitude,
+      $latitude,
+      $post_type,
+      $radius
+    );
+
+    return $wpdb->get_results($query, ARRAY_A);
+  }
+
+
+  /**
+   * Retrieve all posts with geotag data.
+   *
+   * @return array The list of all geotagged posts.
+   */
+  public static function get_all_geotagged_posts()
+  {
+    global $wpdb;
+
+    $geodata_table = $wpdb->prefix . 'mapifyme_geodata';
+    $posts_table = $wpdb->prefix . 'posts';
+
+    // Query all posts with valid latitude and longitude, including post_content
+    $query = "
+        SELECT p.ID, p.post_title, p.post_content, p.post_type, geo.latitude, geo.longitude
+        FROM $posts_table p
+        INNER JOIN $geodata_table geo ON p.ID = geo.post_id
+        WHERE p.post_status = 'publish'
+        AND geo.latitude IS NOT NULL
+        AND geo.longitude IS NOT NULL
+    ";
+
+    return $wpdb->get_results($query, ARRAY_A);
+  }
+
+
+  public static function get_posts_by_location($latitude = null, $longitude = null, $street = '', $city = '', $state = '', $zip = '', $country = '', $radius = 10)
+  {
+    global $wpdb;
+    $geodata_table = $wpdb->prefix . 'mapifyme_geodata';
+    $posts_table = $wpdb->prefix . 'posts';
+
+    // Base query to join the posts and geodata tables
+    $query = "
+        SELECT p.ID, p.post_title, p.post_content, geo.latitude, geo.longitude,
+        (6371 * acos(
+            cos(radians(%f)) * cos(radians(geo.latitude)) *
+            cos(radians(geo.longitude) - radians(%f)) +
+            sin(radians(%f)) * sin(radians(geo.latitude))
+        )) AS distance
+        FROM $posts_table p
+        INNER JOIN $geodata_table geo ON p.ID = geo.post_id
+        WHERE p.post_status = 'publish'
+    ";
+
+    // Initialize parameters for the query
+    $params = [];
+    $has_location = false;
+
+    // Phase 1: Check if latitude and longitude are provided
+    if (!empty($latitude) && !empty($longitude)) {
+      $params = [$latitude, $longitude, $latitude];
+      $has_location = true;
+    } else {
+      // Phase 2: Try to find latitude and longitude based on provided city, street, etc.
+      $location_query = "SELECT latitude, longitude FROM $geodata_table WHERE 1=1";
+      $location_params = [];
+
+      if (!empty($street)) {
+        $location_query .= ' AND street LIKE %s';
+        $location_params[] = '%' . $wpdb->esc_like($street) . '%';
+      }
+      if (!empty($city)) {
+        $location_query .= ' AND city LIKE %s';
+        $location_params[] = '%' . $wpdb->esc_like($city) . '%';
+      }
+      if (!empty($state)) {
+        $location_query .= ' AND state LIKE %s';
+        $location_params[] = '%' . $wpdb->esc_like($state) . '%';
+      }
+      if (!empty($zip)) {
+        $location_query .= ' AND zip LIKE %s';
+        $location_params[] = '%' . $wpdb->esc_like($zip) . '%';
+      }
+      if (!empty($country)) {
+        $location_query .= ' AND country LIKE %s';
+        $location_params[] = '%' . $wpdb->esc_like($country) . '%';
+      }
+
+      // Get the first matching row with latitude and longitude
+      $location_row = $wpdb->get_row($wpdb->prepare($location_query, ...$location_params), ARRAY_A);
+
+      if ($location_row && !empty($location_row['latitude']) && !empty($location_row['longitude'])) {
+        $latitude = $location_row['latitude'];
+        $longitude = $location_row['longitude'];
+        $params = [$latitude, $longitude, $latitude];
+        $has_location = true;
+      }
+    }
+
+    // Phase 3: If we have latitude and longitude, proceed with the proximity search
+    if ($has_location) {
+      // Continue building the main query
+      $query .= " HAVING distance <= %d ORDER BY distance ASC";
+      $params[] = $radius;
+
+      // Prepare and execute the main proximity query
+      $prepared_query = $wpdb->prepare($query, ...$params);
+      return $wpdb->get_results($prepared_query, ARRAY_A);
+    } else {
+      // No latitude and longitude could be found, return an empty result
+      return [];
+    }
+  }
 }

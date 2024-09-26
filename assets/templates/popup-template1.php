@@ -7,7 +7,7 @@
   <!-- Display post content -->
   <?php if (!empty($fields['content'])): ?>
     <div class="popup-content">
-      <?php echo wp_kses_post($fields['content']); // Properly escapes content with allowed HTML 
+      <?php echo wp_kses_post($fields['content']); // Safely display post content 
       ?>
     </div>
   <?php endif; ?>

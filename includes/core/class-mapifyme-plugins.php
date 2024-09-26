@@ -16,7 +16,7 @@ class MapifyMe_Plugins
   public $slug = '';                  // Plugin slug (used for URLs, etc.)
   public $is_hidden_plugin = false;   // If true, the plugin is hidden from the UI
   public $allowed_disable = false;    // If false, this plugin cannot be disabled
-  public $version = '1.0';            // Plugin version
+  public $version = '1.0.0';            // Plugin version
   public $status = 'inactive';        // Plugin status (active/inactive)
   public $plugin_dir = false;         // Directory path for the plugin
   public $plugin_url = false;         // URL path for the plugin
@@ -46,6 +46,14 @@ class MapifyMe_Plugins
     if (is_object($plugin)) {
       // Add the plugin object to the registered plugins array
       self::$registered_plugins[] = $plugin;
+
+      // Automatically activate the plugin if the status is 'active'
+      $active_plugins = get_option(self::$active_plugins_option, array());
+      $plugin_class = get_class($plugin);
+
+      if ($plugin->status === 'active' && !in_array($plugin_class, $active_plugins)) {
+        self::activate_plugin($plugin); // Activate plugin if it's not already active
+      }
     }
   }
 
